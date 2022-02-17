@@ -1,0 +1,139 @@
+---
+title: "Tarea 2 Genómica Funcional 2022"
+author: "Plascencia Bahena Ximena"
+date: "16/2/2022"
+output: html_document
+---
+
+**1. Considera las siguientes cantidades discute y justifica qué tipo de distribución de probabilidad pueden tener las siguientes variables:**
+
+  **a. El número (talla) de calzado de adultos varones en México.**
+  Este tipo de características como talla, estatura, color de ojos, etc. Tienen una distribución normal, ya que las poblaciones tienden a tener un promedio general, es decir, hay menos personas que tienen una talla de zapatos más reducida que el promedio o más grande. 
+  
+  **b. La distribución de habitantes en asentamientos humanos de México.**
+  Pienso que la distribución de habitantes tiene una distribución normal, ya que va a haber estados que por sus características de tamaño, infraestructura, economía, etc, van a contar con cierta cantidad de población. Por ejemplo, en estados que tienen mejor calidad de vida, es más probable que personas lleguen a vivir y al contrario en lugares con malas condiciones la gente emigre a lugares donde puedan conseguir mejor calidad de vida.
+  
+  **c. La velocidad promedio de los automóviles en Bernardo Quintana a las 9 de la mañana en un día laborable.**
+  La distribución de la velocidad tenderá a una distribución normal ya que por las condiciones de tráfico, van a hacer que la mayoría de conductores mantengan una velocidad promedio, pero nunca falta la persona que detiene el tráfico porque le da miedo la autopista y va súper lento o la persona loca que arrevasa los límites de velocidad porque es desesperado o en su defecto se levanta tardisímo.
+  
+  **d. La velocidad promedio de los automóviles en Bernardo Quintana a las 3 de la mañana.**
+  La distribución de la velocidad de los automóviles a las 3 de la mañana tiende a una distribución normal. A esa hora por la falta de automóviles a la que se esta acostumbrado la mayoría de personas aumentan la velocidad, pero eso no quita a las personas precavidas o asustadas de multa que respeten la velocidad o el miedoso que sabe que a esa hora hay locos y baja la velocidad para evitar accidentes.
+  
+  
+**2. Supongamos que tenemos dos nodos (A,B) en una red. El nodo A y B tiene el mismo degree, pero el A tiene un coeficiente de clusterización de 1 y el nodo B un coeficiente bajo. Dibuja está situación y explica cuál sería una mejor diana si quieres eliminarlos y afectar a la red.**
+
+```
+  red <- make_empty_graph(n=11, directed = FALSE)
+  V(red)$color = "purple"
+  V(red)$shape = "sphere" #forma de los nodos
+  red <- add.edges(red, c(1,2, 1,3, 1,11, 2,3, 2,11, 4,1, 4,5, 4,6, 5,7, 5,8, 6,9, 6,10, 7,8, 9,10))
+  plot(red)
+red)
+  degree(red)
+  transitivity(red, type="local") 
+  ```
+
+
+Podemos observar que ambos tienen el mismo degree, pero al calcular el coeficiente de clusterización 1(A) es igual a 1 y 4(B) tiene un valor de 0.
+
+**Elabora un programa en R que usando funciones calcule, a partir de una matriz de adyacencia (Sólo utiliza R base para resolver este problema)**
+
+  a. Si la red es dirigida o no.
+  ```
+  directed <- function(mat){ #mat es la matriz que vamos a usar
+  if (i==j & j==i){ =si los elementos de la columna i son igual a los de la fila j y al revés
+    print("TRUE") #la red es dirigida
+  } else{ print ("FALSE")}} #si son diferentes no es dirigida
+  ```
+  b. Si la red es pesada o no.
+  ```
+  pesada <- function(mat){ #mat es la matriz que vamos a usar
+  if (i>1 & j>1){ #si los elementos dentro de la matriz son mayores a 1 la red tiene un peso
+    print("TRUE")
+  } else{ print ("FALSE")}} =
+```
+  c. El degree de los nodos.
+  d. El histograma del degree.
+
+```
+degree <- function(mat)
+  for(i in mat)
+    for (j in mat){
+    d=i*j   #multiplicamos filas por columnas para sacar el promedio de cada nodo de la matriz
+    print(d) #imprimimos el degree
+    hist(d) #imprimos el histograma
+  }
+  ``` 
+**4. A partir de la red de interacción de proteínas alojada en la librería igraphdata, que puedes llamar mediante data(yeast) elabora un programa en R (acá sí puedes usar librerías especializadas de R) que:**
+
+  a. Calcule la distribución de conectividades y grafique esa distribución. Discute tu resultado.
+  b. Grafique el boxplot de la distribución de conectividades y discute tu resultado.
+  c. Encuentre la proporción de nodos que tienen 15 o más conectividades.
+  d. Calcule el degree máximo de la red.
+  e. Calcule el diámetro
+  f. La trayectoria más larga.
+  g. Elimine los 10 nodos más conectados de la red y determine el diámetro cada vez que lo haga.
+  h. Determine los diez nodos más importantes por al menos tres medidas de centralidad.
+    i. Clusterizar la red por al menos dos métodos y determinar el tamaño del clúster más grande.
+  j. Determine si la red es de mundo pequeño, ultra pequeño u otra.
+  
+```
+library (igraph)
+library (igraphdata)
+data (yeast)
+  ejer4 <- function(red) { #esta función puede ser usada para la red que se desee
+   distribution <- degree.distribution(red) #sacamos la distribución
+  degr <- degree(red) #calculamos el degree
+  dm <-degr[order(degr, decreasing = TRUE)] #ordenamos el degree de mayor a menor
+  quince <- which(degree(red) >=15) #seleccionar los nodos con 15 o más conectividades
+  dat15 <- length(quince) #cuantos datos tienen 15 o más conectividades
+  longtotal <- length(degree(red)) #obtenemos la longitus de todos los datos
+  por <- (dat15/longtotal)*100 #regla de tres para obtener el porcentaje de nodos con 15 o más conexiones
+  trayectoria <- path.length.hist(red)  #calculamos la trayectoria
+  trayectoria <- is.vector(trayectoria) #convertimos los valores a vector
+  t <- trayectoria[order(trayectoria, decreasing = TRUE)] #ordenamos de mayor a menor
+  nodos <- sort(degree(red), decreasing = TRUE)[1:10] #seleccionar 10 nodos mas importantes
+  dia <- c() #vector vacio del diametro para añadir los nodos más conectados de la red a través de un ciclo for
+  red2 <- red #renombrar la base de datos
+  for(i in 1:10) { #indica que contara del elemento 1:10
+    dia[i] <- diameter(red2) #sacar el diametro de los 10 nodos más importantes y añadir a el vector vacío de diametro
+    red2 <- delete_vertices (red2, sample (nodos [i])) #eliminar los 10 nodos más importnates
+  }
+  c1 <- centr_eigen(red) #valor de centralidad 1
+  c1 <- is.vector(c1) #convertimos en vector
+  c2 <- centr_degree(red) #valor de centralidad 2
+  c2 <- is.vector(c2) #convertimos en vectore
+  c3 <- centr_betw(red) #valor de centralidad 3
+  c3 <- is.vector(c3) #convertimos en vector
+  c4 <-c1[order(c1, decreasing = TRUE)] #ordenamos de mayor a menor los valores de centralidad 1
+  c5 <-c2[order(c2, decreasing = TRUE)] #ordenamos de mayor a menor los valores de centralidad 2
+  c6 <-c3[order(c3, decreasing = TRUE)] #ordenamos de mayor a menor los valores de centralidad 3
+  eb <- cluster_edge_betweenness(red, directed = FALSE) #cluster método 1
+  table(membership(eb)) #separamos por grupos
+  graf1<- plot(eb, red) #imprimos vector con el plot
+  fg <-cluster_fast_greedy(red)  #cluster método 2
+  table (membership(fg)) #separamos por grupos
+  graf2 <- plot(fg, red) #imprimos vector con el plot
+  comparacion <- compare(lp, fg, method = "adjusted.rand") #comparamos los plots
+  comparacion <- comparacion[order(comparación, decreasing = TRUE)] #comparamos valores de la comparación de mayor a menor
+  print(paste("A. Distrubución de probabilidades",distribution )) #imprimos la distribución de probabilidades
+  print(hist(distribution)) #imprimimos el histograma de la distribución 
+  print(boxplot(distribution)) #imprimimos el boxplot de la distribución
+  print(paste("C. Nodos con más de 15 conexiones", por))
+  print(paste("D. Degree máximo de la red", dm[1])) #Imprimimos el degree máximo
+  print(paste ("E. El diametro de la red es", diametro(red))) #imprimimos el diametro
+  print(paste("F. La trayectoria más larga es", t[1])) #imprimos la trayectoria más larga
+  print(paste("G. Diamétro 10 nodos más importantes", dia))
+  print(paste("Centralidad 1", c4[1:10])) #imprimimos lo 10 valores más altos de la centralidad 1
+  print(paste("Centralidad 2", c5[1:10])) #imprimimos lo 10 valores más altos de la centralidad 2
+  print(paste("Centralidad 3", c6[1:10])) #imprimimos lo 10 valores más altos de la centralidad 3
+  print(graf1) #imprimimos el cluster 1
+  print(graf2) #imprimimos el cluster 2
+  print(comparacion) #imprimimos la comparación
+  print(paste("El cluster", comparacion, "es más grande"))
+  }
+ejer4 (yeast)
+```
+#Mi computadora ya no quiso correr el script completo cuando puse los clusters, pero antes de eso lo hacia y si lo corre si lo separo por partes si lo hacia... :c
+ **a. La distribución de conectividades se acerca a una distribución de potencia esto se debe a que como hemos aprendido, es una distribución que ayuda a que la red se mantenga si se llega a eliminar un nodo, lo cual es sumamente importante en sistemas biológicos, para la preservación de funciones.
+
